@@ -1,0 +1,9 @@
+# Ignore dataset files
+data/*.csv
+*.json
+*.zip
+*.tar.gz
+
+# Ignore Python cache
+__pycache__/
+*.pyc
