@@ -31,12 +31,13 @@ Clone the repository:
 git clone https://github.com/your-username/amazon-fashion-recommender.git
 cd amazon-fashion-recommender
 
+---
 ## Install dependencies:
 ```bash
 pip install -r requirements.txt
-
+---
 ### Usage
 ```bash
 Run the Streamlit app: streamlit run app.py
-
+---
 ### Tech Stack Python Streamlit Pandas, Scikit-Learn TF-IDF & Cosine Similarity Collaborative Filtering (user-item interactions).
