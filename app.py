@@ -192,7 +192,7 @@ if product_choice:
         f"**Title:** {selected['product_title']}  \n"
         f"**Category:** {selected.get('category', 'N/A')}  \n"
         f"**Brand:** {selected.get('brand', 'N/A')}"
-        f"**Mean Rating:** {selected['rating_mean']:.2f} ⭐  \n"
+        #f"**Mean Rating:** {selected['rating_mean']:.2f} ⭐  \n"
         f"**Total Reviews:** {selected['rating_count']}"
     )
 
