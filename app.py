@@ -122,7 +122,7 @@ if "product_title" not in products.columns:
 # 5. Popularity Recommender
 # ===============================
 def get_popular_products(n=10):
-   if "product_id" not in reviews.columns:
+    if "product_id" not in reviews.columns:
         st.warning("⚠️ 'product_id' not found in reviews. Popularity recommender disabled.")
         return pd.DataFrame()
     popular = (
