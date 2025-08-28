@@ -122,15 +122,15 @@ if "product_title" not in products.columns:
 # 5. Popularity Recommender
 # ===============================
 def get_popular_products(n=10):
-    if "product_id" not in reviews.columns:
-        st.warning("⚠️ 'product_id' not found in reviews. Popularity recommender disabled.")
-        return pd.DataFrame()
+#   if "product_id" not in reviews.columns:
+ #       st.warning("⚠️ 'product_id' not found in reviews. Popularity recommender disabled.")
+  #      return pd.DataFrame()
     popular = (
         reviews.groupby("product_id")
         .agg(rating_mean=("rating", "mean"), rating_count=("rating", "count"))
         .reset_index()
     )
-    if "product_id" in products.columns:
+   # if "product_id" in products.columns:
         popular = popular.merge(products, on="product_id", how="left")
     popular = popular.sort_values(["rating_count", "rating_mean"], ascending=False)
     return popular.head(n)
@@ -139,11 +139,11 @@ def get_popular_products(n=10):
 # 6. Content-Based Recommender (Safe)
 # ===============================
 def content_recommender(selected_product, top_n=5):
-    if not content_based_enabled:
-        return pd.DataFrame()
+    #if not content_based_enabled:
+     #   return pd.DataFrame()
     indices = pd.Series(products.index, index=products["product_title"]).drop_duplicates()
-    if selected_product not in indices:
-        return pd.DataFrame()
+    #if selected_product not in indices:
+     #   return pd.DataFrame()
     idx = indices[selected_product]
     cosine_sim = linear_kernel(tfidf_matrix[idx], tfidf_matrix).flatten()
     sim_scores = list(enumerate(cosine_sim))
@@ -156,11 +156,11 @@ def content_recommender(selected_product, top_n=5):
 # 7. Collaborative Filtering (Safe)
 # ===============================
 def collaborative_recommender(user_id, top_n=5):
-    if "user_id" not in reviews.columns or "product_id" not in reviews.columns:
-        return pd.DataFrame()
+    #if "user_id" not in reviews.columns or "product_id" not in reviews.columns:
+     #   return pd.DataFrame()
     user_ratings = reviews[reviews["user_id"] == user_id]
-    if user_ratings.empty:
-        return pd.DataFrame()
+    #if user_ratings.empty:
+     #   return pd.DataFrame()
     top_product = user_ratings.sort_values("rating", ascending=False).iloc[0]["product_id"]
     similar_users = reviews[reviews["product_id"] == top_product]["user_id"].unique()
     collab = reviews[reviews["user_id"].isin(similar_users)]
