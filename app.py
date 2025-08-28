@@ -164,6 +164,8 @@ def collaborative_recommender(user_id, top_n=5):
     top_product = user_ratings.sort_values("rating", ascending=False).iloc[0]["product_id"]
     similar_users = reviews[reviews["product_id"] == top_product]["user_id"].unique()
     collab = reviews[reviews["user_id"].isin(similar_users)]
+    if collab.empty:
+        return pd.DataFrame()
     collab_avg = collab.groupby("product_id")["rating"].mean().reset_index()
     collab = collab_avg.merge(products, on="product_id", how="left")
     collab = collab.sort_values("rating", ascending=False)
@@ -208,17 +210,38 @@ if st.button("🔍 Get Recommendations") and product_choice:
 
     # Collaborative Filtering
     st.subheader("👥 Collaborative Filtering Recommendations")
+    fallback_msg = None
+    collab_recs = pd.DataFrame()
+
     if "user_id" in reviews.columns:
-        # Find an example user who rated the selected product highly
-        sample_user_df = reviews[
-            (reviews["product_id"] == selected.get("product_id"))
-        ]
-        if not sample_user_df.empty:
+        sample_user_df = reviews[(reviews["product_id"] == selected.get("product_id"))]
+
+        if sample_user_df.empty:
+            # fallback → pick a random active user
+            active_users = reviews["user_id"].value_counts()
+            active_users = active_users[active_users > 5].index  # only users with >5 ratings
+            if len(active_users) > 0:
+                user_id = random.choice(active_users)
+                collab_recs = collaborative_recommender(user_id)
+                fallback_msg = "⚠️ No users rated this product → showing recs for a random active user."
+        else:
             user_id = sample_user_df.iloc[0]["user_id"]
             collab_recs = collaborative_recommender(user_id)
-            if collab_recs.empty:
-                st.warning("No collaborative recommendations found.")
-            else:
-                st.dataframe(collab_recs[["product_title", "rating"]])
-        else:
-            st.warning("No collaborative recommendations available.")
+
+        if collab_recs.empty:
+            # final fallback → show popular products
+            collab_recs = get_popular_products(5)
+            fallback_msg = "⚠️ No collaborative recommendations available → showing popular products."
+
+    # Show message + results
+    if fallback_msg:
+        st.info(fallback_msg)
+
+    if not collab_recs.empty:
+        st.dataframe(
+            collab_recs[["product_title", "rating"]] 
+            if "rating" in collab_recs.columns 
+            else collab_recs[["product_title", "rating_mean"]]
+        )
+    else:
+        st.warning("No collaborative recommendations could be generated.")
