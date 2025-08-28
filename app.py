@@ -37,7 +37,7 @@ def load_dataset_safe(file_name, url=None):
 # --- Products dataset ---
 products = load_dataset_safe(
     "products_fashion.csv",
-    url="https://drive.google.com/uc?export=download&id=19MQoHjhYDd-X1X3f4ABn4b5HyG-Hy5RZ"
+    url="https://drive.google.com/uc?id=19MQoHjhYDd-X1X3f4ABn4b5HyG-Hy5RZ&export=download"
 )
 if products is None:
     st.info("📂 Upload products_fashion.csv")
@@ -53,7 +53,7 @@ if products is None:
 # --- Reviews dataset ---
 reviews = load_dataset_safe(
     "reviews_fashion.csv",
-    url="https://drive.google.com/uc?export=download&id=1_3Yr0OvHlXK06ox_XCzCqEOXz0Qep5u3"
+    url="https://drive.google.com/uc?id=1LSIYlvaO-uEk3qPccCMwo_SE1WGNEBI-&export=download"
 )
 if reviews is None:
     st.info("📂 Upload reviews_fashion.csv")
