@@ -1,59 +1,71 @@
 import os
 import streamlit as st
 import pandas as pd
+import requests
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 
 # ===============================
-# 1. Load Dataset (Safe & Flexible)
+# 1. Cached Loader (local + URL only)
 # ===============================
 @st.cache_data
-def load_dataset_safe(file_name, url=None, required_columns=None):
-    # Attempt to load from local disk
+def load_dataset_safe(file_name, url=None):
+    """
+    Try loading dataset from local disk or URL.
+    If fails, return None (handled outside).
+    """
+    # --- Load from local ---
     if os.path.exists(file_name):
         try:
-            df = pd.read_csv(file_name)
-            if required_columns:
-                for col in required_columns:
-                    if col not in df.columns:
-                        continue
-            st.success(f"✅ Loaded {file_name} from local folder")
-            return df
+            return pd.read_csv(file_name)
         except Exception as e:
             st.warning(f"⚠️ Failed to load {file_name} locally: {e}")
-    # Attempt to download from URL
+
+    # --- Download from URL ---
     if url:
         try:
-            import requests
             r = requests.get(url)
             r.raise_for_status()
             with open(file_name, "wb") as f:
                 f.write(r.content)
-            df = pd.read_csv(file_name)
-            st.info(f"📥 Downloaded {file_name} from online source...")
-            return df
+            return pd.read_csv(file_name)
         except Exception as e:
             st.warning(f"⚠️ Download failed for {file_name}: {e}")
-    # Fallback: upload file
-    uploaded_file = st.file_uploader(f"📂 Upload {file_name}", type=["csv"])
-    if uploaded_file:
-        try:
-            df = pd.read_csv(uploaded_file)
-            st.success(f"✅ Loaded {file_name} from upload")
-            return df
-        except Exception as e:
-            st.warning(f"⚠️ Failed to read uploaded {file_name}: {e}")
-    st.stop()
 
-# Load datasets
+    return None  # fallback handled outside
+
+# --- Products dataset ---
 products = load_dataset_safe(
     "products_fashion.csv",
-    url="https://drive.google.com/uc?id=1nrNxUDUdPNXpWgtiWf0PwACFSQxYvdq1"
+    url="https://drive.google.com/uc?export=download&id=19MQoHjhYDd-X1X3f4ABn4b5HyG-Hy5RZ"
 )
+if products is None:
+    st.info("📂 Upload products_fashion.csv")
+    uploaded_products = st.file_uploader("Upload products dataset", type=["csv", "zip"])
+    if uploaded_products:
+        if uploaded_products.name.endswith(".zip"):
+            products = pd.read_csv(uploaded_products, compression="zip")
+        else:
+            products = pd.read_csv(uploaded_products)
+    else:
+        st.stop()
+
+# --- Reviews dataset ---
 reviews = load_dataset_safe(
     "reviews_fashion.csv",
-    url="https://drive.google.com/uc?id=1GvJbrgFvhbhoKTaltZSdNTEf0XNUGL1r"
+    url="https://drive.google.com/uc?export=download&id=1_3Yr0OvHlXK06ox_XCzCqEOXz0Qep5u3"
 )
+if reviews is None:
+    st.info("📂 Upload reviews_fashion.csv")
+    uploaded_reviews = st.file_uploader("Upload reviews dataset", type=["csv", "zip"])
+    if uploaded_reviews:
+        if uploaded_reviews.name.endswith(".zip"):
+            reviews = pd.read_csv(uploaded_reviews, compression="zip")
+        else:
+            reviews = pd.read_csv(uploaded_reviews)
+    else:
+        st.stop()
+
 
 # ===============================
 # 2. Detect Text Columns (Multi-Column Handling)
