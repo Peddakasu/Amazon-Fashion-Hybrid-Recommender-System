@@ -131,7 +131,7 @@ def get_popular_products(n=10):
         .reset_index()
     )
    # if "product_id" in products.columns:
-        popular = popular.merge(products, on="product_id", how="left")
+    popular = popular.merge(products, on="product_id", how="left")
     popular = popular.sort_values(["rating_count", "rating_mean"], ascending=False)
     return popular.head(n)
 
