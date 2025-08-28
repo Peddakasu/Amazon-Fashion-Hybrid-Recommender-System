@@ -188,12 +188,12 @@ product_choice = st.selectbox("Choose a product:", products["product_title"].val
 if product_choice:
     selected = products[products["product_title"] == product_choice].iloc[0]
     st.markdown(
-        f"**Product ID:** {selected['product_id']}  \n"
+        #f"**Product ID:** {selected['product_id']}  \n"
         f"**Title:** {selected['product_title']}  \n"
         f"**Category:** {selected.get('category', 'N/A')}  \n"
         f"**Brand:** {selected.get('brand', 'N/A')}"
         #f"**Mean Rating:** {selected['rating_mean']:.2f} ⭐  \n"
-        f"**Total Reviews:** {selected['rating_count']}"
+        #f"**Total Reviews:** {selected['rating_count']}"
     )
 
 # Button to trigger recommendations
