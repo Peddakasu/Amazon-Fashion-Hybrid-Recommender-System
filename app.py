@@ -65,6 +65,10 @@ if reviews is None:
             reviews = pd.read_csv(uploaded_reviews)
     else:
         st.stop()
+st.write("Products columns:", products.columns.tolist())
+st.write("Reviews columns:", reviews.columns.tolist())
+st.write("First 5 rows of products:", products.head())
+st.write("First 5 rows of reviews:", reviews.head())
 
 
 # ===============================
